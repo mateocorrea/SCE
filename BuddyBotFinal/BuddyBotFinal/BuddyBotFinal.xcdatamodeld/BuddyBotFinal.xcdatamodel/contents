@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Automatic">
+    <entity name="Phrase" syncable="YES">
+        <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mesKey" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey6" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey7" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey8" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey9" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey10" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey11" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey12" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey13" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey14" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey15" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey16" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey17" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey18" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey19" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey20" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey21" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey22" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey23" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey24" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="resKey25" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Phrase" positionX="-54" positionY="-9" width="128" height="450"/>
+    </elements>
+</model>
