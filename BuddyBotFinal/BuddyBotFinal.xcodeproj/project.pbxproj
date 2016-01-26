@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C03C57D1C57064300C106E3 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C03C57C1C57064300C106E3 /* StartScreen.swift */; };
+		3C03C57F1C57070900C106E3 /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C03C57E1C57070900C106E3 /* Instructions.swift */; };
+		3C57F3691C571177002F533D /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57F3681C571177002F533D /* Credits.swift */; };
+		3C9AEEF71C1913FF00F2652C /* preTraining.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9AEEF61C1913FF00F2652C /* preTraining.swift */; };
 		3CF743BD1C0E65EA00EB1FF5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF743BC1C0E65EA00EB1FF5 /* AppDelegate.swift */; };
 		3CF743BF1C0E65EA00EB1FF5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF743BE1C0E65EA00EB1FF5 /* ViewController.swift */; };
 		3CF743C21C0E65EA00EB1FF5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CF743C01C0E65EA00EB1FF5 /* Main.storyboard */; };
@@ -36,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C03C57C1C57064300C106E3 /* StartScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
+		3C03C57E1C57070900C106E3 /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
+		3C57F3681C571177002F533D /* Credits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credits.swift; sourceTree = "<group>"; };
+		3C9AEEF61C1913FF00F2652C /* preTraining.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = preTraining.swift; sourceTree = "<group>"; };
 		3CF743B91C0E65EA00EB1FF5 /* BuddyBotFinal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuddyBotFinal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CF743BC1C0E65EA00EB1FF5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CF743BE1C0E65EA00EB1FF5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -104,11 +112,15 @@
 				3CF743BC1C0E65EA00EB1FF5 /* AppDelegate.swift */,
 				3CF743BE1C0E65EA00EB1FF5 /* ViewController.swift */,
 				3CF743C01C0E65EA00EB1FF5 /* Main.storyboard */,
+				3C03C57E1C57070900C106E3 /* Instructions.swift */,
+				3C9AEEF61C1913FF00F2652C /* preTraining.swift */,
 				3CF743ED1C0E66A000EB1FF5 /* vcMain.swift */,
 				3CF743C61C0E65EA00EB1FF5 /* Assets.xcassets */,
 				3CF743C81C0E65EA00EB1FF5 /* LaunchScreen.storyboard */,
 				3CF743CB1C0E65EA00EB1FF5 /* Info.plist */,
 				3CF743C31C0E65EA00EB1FF5 /* BuddyBotFinal.xcdatamodeld */,
+				3C03C57C1C57064300C106E3 /* StartScreen.swift */,
+				3C57F3681C571177002F533D /* Credits.swift */,
 			);
 			path = BuddyBotFinal;
 			sourceTree = "<group>";
@@ -262,9 +274,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C03C57F1C57070900C106E3 /* Instructions.swift in Sources */,
+				3C9AEEF71C1913FF00F2652C /* preTraining.swift in Sources */,
 				3CF743BF1C0E65EA00EB1FF5 /* ViewController.swift in Sources */,
+				3C03C57D1C57064300C106E3 /* StartScreen.swift in Sources */,
 				3CF743EE1C0E66A000EB1FF5 /* vcMain.swift in Sources */,
 				3CF743C51C0E65EA00EB1FF5 /* BuddyBotFinal.xcdatamodeld in Sources */,
+				3C57F3691C571177002F533D /* Credits.swift in Sources */,
 				3CF743BD1C0E65EA00EB1FF5 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -490,6 +506,7 @@
 				3CF743E61C0E65EA00EB1FF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3CF743E71C0E65EA00EB1FF5 /* Build configuration list for PBXNativeTarget "BuddyBotFinalTests" */ = {
 			isa = XCConfigurationList;
@@ -498,6 +515,7 @@
 				3CF743E91C0E65EA00EB1FF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3CF743EA1C0E65EA00EB1FF5 /* Build configuration list for PBXNativeTarget "BuddyBotFinalUITests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +524,7 @@
 				3CF743EC1C0E65EA00EB1FF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

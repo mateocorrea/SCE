@@ -13,9 +13,9 @@ class vcMain: UIViewController {
     
     var trainingMode = false;
     
-    @IBOutlet var messageField: UITextField!
-    @IBOutlet var responseLabel: UILabel!
+    @IBOutlet weak var responseLabel: UILabel!
     
+    @IBOutlet weak var messageField: UITextField!
     var phrases = [NSManagedObject]()
     
     override func viewWillAppear(animated: Bool) {
@@ -42,6 +42,35 @@ class vcMain: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        
+        let file = "example.txt" //this is the file. we will write to and read from it
+        
+        let text = "some random stuff for real feil" //just a text
+        
+        if let dir : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first {
+            let path = dir.stringByAppendingPathComponent(file);
+            let path2 = "Assets.xcassets/" + file;
+            
+            //writing
+            do {
+                try text.writeToFile(path, atomically: false, encoding: NSUTF8StringEncoding)
+            }
+            catch {/* error handling here */
+                print("something went wrong writing");
+            }
+            
+            //reading
+            do {
+                let text2 = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
+                print(path)
+                print(path2)
+                print(text2);
+            }
+            catch {/* error handling here */
+                print("something went wrong reading");
+            }
+        }
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -51,172 +80,95 @@ class vcMain: UIViewController {
     
     @IBAction func btnSend() {
         
+        
+        /* FIX needs to be done in an init */
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate .managedObjectContext
         let entity = NSEntityDescription.entityForName("Phrase", inManagedObjectContext: managedContext)
+        if(phrases.count == 0) {
+            preTrain(entity!, managedContext: managedContext)
+        }
         
-        
+        //currently:
+        // 1. Looks for the most similar phrase to the user's message (or one that meets a certain similarity requirement)
+        // --needs to save the uer's message as a new phrase (if it does not already exist) and set it as a response to the computer's message
+        // --if the user's phrase already exists, then it needs to be connected to the  ocmputers's message if it is not already
+        // 2. get the key
+        // 3. add all the messages that have that key to an array
+        // 4. respond with a random message from the array
         
         var messageExists = false
-        var responseExists = false
+        let messageText = messageField.text
+        var message: NSManagedObject?
+        let computerMessage = responseLabel.text
+        var computerMessageKey = ""
         
-        if(trainingMode) {
-            var currentMessageKey: String! = ""
-            /* Seperate the training message into the message and the response */
-            let fullText: String! = messageField.text
-            let convoArr = fullText.componentsSeparatedByString("QQQ")
-            let messageText = convoArr[0]
-            let responseText = convoArr[1]
-            
-            for phrase in phrases {
-                // if message exists
-                if messageText == (phrase.valueForKey("content") as! String) {
-                    
-                    messageExists = true
-                    currentMessageKey = (phrase.valueForKey("mesKey") as! String)
-                    
-                }
-            }
-            for phrase in phrases {
-                if responseText == (phrase.valueForKey("content") as! String) { // if response exists
-                    
-                    responseExists = true
-                    
-                    for var index = 1; index < 26; index++ {
-                        print(currentMessageKey)
-                        if (phrase.valueForKey("resKey" + String(index)) as? String) == currentMessageKey {
-                            break // if already connected, break
-                        }
-                        if phrase.valueForKey("resKey" + String(index)) == nil {
-                            phrase.setValue(currentMessageKey, forKey: "resKey" + String(index))
-                            break
-                        }
-                    }
-                }
-            }
-            
-            
-            if(!messageExists) {
-                let message = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-                message.setValue(messageText, forKey: "content")
-                message.setValue(String(phrases.count + 1), forKey: "mesKey")
-                currentMessageKey = String(phrases.count + 1)
+        /* NEEDS TO LOOK FOR A SIMILAR PHRASE (that has a response) AND GET ITS KEY, NOT AN EXACT PHRASE */
+        message = respondableMessage(messageText!)
         
-                do {
-                    try managedContext.save()
-                    phrases.append(message)
-                } catch let error as NSError {
-                    print("Message could not save \(error), \(error.userInfo)")
-                }
+        /* Loop through all the filtered phrases, check if the user's message exists */
+        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(messageText!)) {
+            /* Checks if the user's message already exists */
+            /* should FIX to say that the message exists if it reaches a certain requirement, not a total match */
+            if similarity(messageText!, b: phrase.valueForKey("content") as! String) == 0 {
+                messageExists = true
+                break
             }
-            if(!responseExists) {
-                let response = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-                response.setValue(responseText, forKey: "content")
-                response.setValue(String(phrases.count + 1), forKey: "mesKey")
-                response.setValue(currentMessageKey, forKey: "resKey1")
-                
-                do {
-                    try managedContext.save()
-                    phrases.append(response)
-                } catch let error as NSError {
-                    print("Response could not save \(error), \(error.userInfo)")
-                }
+        }
+        
+        /*  Loop through all the phrases and get the computer's original message's mesKey */
+        for phrase in phrases {
+            /* get the mesKey of the computerMessage */
+            if computerMessage == (phrase.valueForKey("content") as! String) {
+                computerMessageKey = phrase.valueForKey("mesKey") as! String
+                break
             }
+        }
+        
+        
+        print("The exact message sent: \(messageText)")
+        print("The message being replied to: \(message!.valueForKey("content") as! String) (Has mesKey of \(message!.valueForKey("mesKey") as! String))")
+        print("The computer's original message's mesKey: \(computerMessageKey)")
+        
+        /* create a new message if the message did not exist */
+        if(!messageExists) {
+            let newMessage = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
+            newMessage.setValue(messageText, forKey: "content")
+            newMessage.setValue(String(phrases.count + 1), forKey: "mesKey")
+            newMessage.setValue(computerMessageKey, forKey: "resKey1") // saves it as a response for the computer's message
             
             do {
                 try managedContext.save()
-            } catch let error as NSError { //dskfjads;k fjasdk;fadskfas
-                
-                print("Could not save \(error), \(error.userInfo)")
+                phrases.append(newMessage)
+                print("The user's message was added to the database and saved as a response to the computer's original message")
+            } catch let error as NSError {
+                print("Message could not save \(error), \(error.userInfo)")
             }
-            
-        } else {
-            //currently:
-            // 1. looks for the message, gets its key
-            // 2. if key not found, then sets it to 1
-            // 3. adds all the messages that have that key to an array
-            // 4. responds with a random message from the array
-            
-            // what should happen:
-            // 1. Looks for the most similar phrase to the user's message (or one that meets a certain similarity requirement)
-            // --needs to save the uer's message as a new phrase (if it does not already exist) and set it as a response to the computer's message
-            // --if the user's phrase already exists, then it needs to be connected to the  ocmputers's message if it is not already
-            // 2. get the key
-            // 3. add all the messages that have that key to an array
-            // 4. respond with a random message from the array
-            
-            
-            
-            // checking for similarity:
-            // caps dont matter, punctuation doesn't matter,
-            
-            
-            let messageText = messageField.text
-            var message: NSManagedObject?
-            let computerMessage = responseLabel.text
-            var computerMessageKey = ""
-            
-            
-            /* NEEDS TO LOOK FOR A SIMILAR PHRASE AND GET ITS KEY, NOT AN EXACT PHRASE */
-            for phrase in phrases {
-                if messageText == (phrase.valueForKey("content") as! String) { // needs to look for similarity, not exactness
-                    message = phrase
-                    messageExists = true
-                    break
+        } else { // message already exists, connect it to the computer message
+            for var index = 1; index < 26; index++ {
+                if (message!.valueForKey("resKey" + String(index)) as? String) == computerMessageKey {
+                    print("The user's message was already in the database and was already a response to the computer's original message")
+                    break // if already connected, break
+                }
+                if message!.valueForKey("resKey" + String(index)) == nil {
+                    message!.setValue(computerMessageKey, forKey: "resKey" + String(index))
+                    print("The user's message was set as a response (resKey\(index)) to the computer's original message")
+                    break // break after connecting
                 }
             }
-            if message == nil { // get rid of this, when checking for similarity works
-                message = phrases[0]
-            }
-            
-            /* get the mesKey of the computerMessage */
-            for phrase in phrases {
-                if computerMessage == (phrase.valueForKey("content") as! String) {
-                    computerMessageKey = phrase.valueForKey("mesKey") as! String
-                }
-            }
-            
-            /* create a new message if the message did not exist */
-            if(!messageExists) {
-                let newMessage = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
-                newMessage.setValue(messageText, forKey: "content")
-                newMessage.setValue(String(phrases.count + 1), forKey: "mesKey")
-                newMessage.setValue(computerMessageKey, forKey: "resKey1") // saves it as a response for the computer's message
-                
-                do {
-                    try managedContext.save()
-                    phrases.append(newMessage)
-                } catch let error as NSError {
-                    print("Message could not save \(error), \(error.userInfo)")
-                }
-            } else { // message already exists, connect it to the computer message
-                for var index = 1; index < 26; index++ {
-                    if (message!.valueForKey("resKey" + String(index)) as? String) == computerMessageKey {
-                        break // if already connected, break
-                    }
-                    if message!.valueForKey("resKey" + String(index)) == nil {
-                        message!.setValue(computerMessageKey, forKey: "resKey" + String(index))
-                        break // break after connecting
-                    }
-                }
-            }
-            
-            /* responds to the most similar message in the database, regardless of what the user said */
-            var allResponses = [String]()
-            for phrase in phrases {
-                for var index = 1; index < 26; index++ {
-                    if message!.valueForKey("mesKey") as? String == (phrase.valueForKey("resKey" + String(index))) as? String {
-                        allResponses.append(phrase.valueForKey("content") as! String)
-                    }
-                }
-            }
-            
-            let randInt = Int(arc4random_uniform(UInt32(allResponses.count)))
-            
-            responseLabel.text = allResponses[randInt]
         }
         
+        /* responds to the most similar message in the database, regardless of what the user said */
+        var allResponses = answersTo(message!)
+        
+        let randInt = Int(arc4random_uniform(UInt32(allResponses.count)))
+        print(allResponses)
+        responseLabel.text = allResponses[randInt] // fails when nothing is a response
+        messageField.text = ""
+        
     }
+    
+    
     
     @IBAction func btnLoad() {
         for p in phrases {
@@ -240,6 +192,218 @@ class vcMain: UIViewController {
     func connect(res: NSManagedObject, key: String?) {
     }
     
+    func preTrain(entity: NSEntityDescription, managedContext: NSManagedObjectContext) {
+        
+        for var i = 0; i < preRecordedConvos.count; i = i + 2 {
+            let message = NSManagedObject(entity: entity, insertIntoManagedObjectContext: managedContext)
+            message.setValue(preRecordedConvos[i], forKey: "content")
+            message.setValue(String(phrases.count + 1), forKey: "mesKey")
+            let response = NSManagedObject(entity: entity, insertIntoManagedObjectContext: managedContext)
+            response.setValue(preRecordedConvos[i+1], forKey: "content")
+            response.setValue(String(phrases.count + 2), forKey: "mesKey")
+            response.setValue(message.valueForKey("mesKey") as! String, forKey: "resKey1")
+            do {
+                try managedContext.save()
+                phrases.append(message)
+                phrases.append(response)
+            } catch let error as NSError {
+                print("Message could not save \(error), \(error.userInfo)")
+            }
+        }
+    }
+    
+    func levenshteinDistance(s: String, t: String) -> Int
+    {
+        // degenerate cases
+        if s == t { return 0 }
+        if s.characters.count == 0 { return t.characters.count }
+        if t.characters.count == 0 { return s.characters.count }
+    
+        // create two work vectors of integer distances
+        var v0 = [Int?](count: t.characters.count+1, repeatedValue: nil)
+        var v1 = [Int?](count: t.characters.count+1, repeatedValue: nil)
+        //int[] v0 = new int[t.Length + 1];
+        //int[] v1 = new int[t.Length + 1];
+    
+        // initialize v0 (the previous row of distances)
+        // this row is A[0][i]: edit distance for an empty s
+        // the distance is just the number of characters to delete from t
+        for var i = 0; i < v0.count; i++ {
+            v0[i] = i;
+        }
+    
+        for var i = 0; i < s.characters.count; i++ {
+            // calculate v1 (current row distances) from the previous row v0
+    
+            // first element of v1 is A[i+1][0]
+            //   edit distance is delete (i+1) chars from s to match empty t
+            v1[0] = i + 1;
+    
+            // use formula to fill in the rest of the row
+            for var j = 0; j < t.characters.count; j++ {
+                var cost = 1
+                
+                /*var text = "Hello World"
+                let firstChar = text[text.startIndex.advancedBy(0)]*/
+                
+                
+                if s[s.startIndex.advancedBy(i)] == t[t.startIndex.advancedBy(j)] {
+                    cost = 0
+                }
+                
+                /*if s[i] == t[j] {
+                    cost = 0
+                }*/
+                let x = v1[j]! + 1
+                let y = v0[j + 1]! + 1
+                let z = v0[j]! + cost
+                
+                var smallest = x
+                if y < smallest {
+                    smallest = y
+                }
+                if z < smallest {
+                    smallest = z
+                }
+                
+                v1[j + 1] = smallest
+            }
+    
+            // copy v1 (current row) to v0 (previous row) for next iteration
+            for var j = 0; j < v0.count; j++ {
+                v0[j] = v1[j];
+            }
+        }
+    
+        return v1[t.characters.count]!;
+    }
+    
+    func respondableMessage(text: String) -> NSManagedObject
+    {
+        var message: NSManagedObject?
+        var minSimilarity = 100000
+        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(text)) {
+            if hasAnswers(phrase) {
+                let s = similarity(text, b: phrase.valueForKey("content") as! String)
+                if  (s < minSimilarity) && ((phrase.valueForKey("mesKey") as? String)?.characters.count > 0) {
+                    message = phrase
+                    minSimilarity = s
+                    if s == 0 {
+                        break
+                    }
+                }
+            }
+            
+        }
+        if message == nil {
+            return phrases[0] // FIX
+        }
+        return message!
+    }
     
     
+    func similarity(a: String, b: String) -> Int {
+        
+        let aString = simplifyString(a)
+        let bString = simplifyString(b)
+        print(aString)
+        print(bString)
+        return levenshteinDistance(aString, t: bString)
+    }
+    
+    /* FIX -->, remove punctuation, */
+    func simplifyString(str: String) -> String {
+        var s = str.lowercaseString
+        
+        let useless_words = ["and", "is", "the", "a", "an", "of"]
+        for word in useless_words {
+            s = s.stringByReplacingOccurrencesOfString(" \(word) ", withString: " ")
+        }
+        
+        let punctuation = ["?", "'"]
+        for char in punctuation {
+            s = s.stringByReplacingOccurrencesOfString(char, withString: "")
+        }
+        
+        let replacements = ["your", "ur", "you", "u", "favorite", "fav"]
+        
+        for var i = 0; i < replacements.count; i = i+2 {
+            s = s.stringByReplacingOccurrencesOfString(replacements[i], withString: replacements[i+1])
+        }
+        
+        return s
+    }
+    
+    func answersTo(message: NSManagedObject) -> [String] {
+        var responses = [String]()
+        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(message.valueForKey("content") as! String)) {
+            for var i = 1; i < 26; i++ {
+                if message.valueForKey("mesKey") as? String == (phrase.valueForKey("resKey" + String(i))) as? String {
+                    responses.append(phrase.valueForKey("content") as! String)
+                }
+            }
+        }
+        return responses
+    }
+    
+    func hasAnswers(message: NSManagedObject) -> Bool {
+        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(message.valueForKey("content") as! String)) {
+            for var i = 1; i < 26; i++ {
+                if (phrase.valueForKey("resKey" + String(i))) as? String == nil {
+                    break
+                }
+                if message.valueForKey("mesKey") as? String == (phrase.valueForKey("resKey" + String(i))) as? String {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    /* Goes from half of length to 1.5 times the length */
+    func filteredByLength(array: [NSManagedObject], filterLength: Int) -> [NSManagedObject]
+    {
+        print("original array: \(array.count)")
+        
+        // Filter by length of string
+        let minLength = filterLength / 2
+        let maxLength = (filterLength * 3) / 2
+        var newArray = [NSManagedObject]()
+        for thing in array {
+            let length = (thing.valueForKey("content") as! String).characters.count
+            if (minLength <= length) && (length <= maxLength) {
+                newArray.append(thing)
+            }
+        }
+        print("new filtered array: \(newArray.count)")
+        return newArray
+    }
+    
+    func filteredByWordCount(array: [NSManagedObject], wordCnt: Int) -> [NSManagedObject]
+    {
+        print("original array: \(array.count)")
+        var change = 0
+        if wordCnt < 2 {
+            change = 0
+        } else {
+            change = Int(round(1.1146 * pow(Double(wordCnt), -0.4727)))
+        }
+        let minLength = wordCnt - change
+        let maxLength = wordCnt + change
+        
+        var newArray = [NSManagedObject]()
+        for thing in array {
+            let length = wordCount(thing.valueForKey("content") as! String)
+            if (minLength <= length) && (length <= maxLength) {
+                newArray.append(thing)
+            }
+        }
+        print("new filtered array: \(newArray.count)")
+        return newArray
+    }
+    
+    func wordCount(word: String) -> Int
+    {
+        return word.componentsSeparatedByString(" ").count - 1
+    }
 }
