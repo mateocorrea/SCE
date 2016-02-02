@@ -136,37 +136,57 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bZ3-TO-DaL">
-                                <rect key="frame" x="192" y="439" width="81" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bZ3-TO-DaL">
+                                <rect key="frame" x="470" y="272.5" width="110" height="55"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="7Mz-7Z-TAe"/>
+                                    <constraint firstAttribute="width" constant="110" id="zY2-Vt-RoZ"/>
+                                </constraints>
                                 <state key="normal" title="Instructions"/>
                                 <connections>
                                     <segue destination="Pfs-gl-22L" kind="presentation" id="F9O-V1-6iQ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5g3-kM-YCB">
-                                <rect key="frame" x="319" y="439" width="81" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="biS-VG-ppe">
+                                <rect key="frame" x="470" y="525" width="110" height="55"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Start"/>
-                                <connections>
-                                    <segue destination="BYZ-38-t0r" kind="presentation" id="kSH-JH-Efh"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="biS-VG-ppe">
-                                <rect key="frame" x="275" y="511" width="50" height="30"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="Frb-5t-BG4"/>
+                                    <constraint firstAttribute="width" constant="110" id="IUL-gy-N8C"/>
+                                </constraints>
                                 <state key="normal" title="Credits"/>
                                 <connections>
                                     <segue destination="0TO-1J-Drp" kind="presentation" id="ZUf-Fz-j7n"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5g3-kM-YCB">
+                                <rect key="frame" x="470" y="28" width="110" height="55"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="55" id="86P-yJ-0q0"/>
+                                    <constraint firstAttribute="width" constant="110" id="AoG-EP-gHY"/>
+                                </constraints>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <segue destination="BYZ-38-t0r" kind="presentation" id="kSH-JH-Efh"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="5g3-kM-YCB" firstAttribute="trailing" secondItem="y0v-SK-i72" secondAttribute="trailingMargin" id="2Ay-A1-ds8"/>
+                            <constraint firstItem="bZ3-TO-DaL" firstAttribute="trailing" secondItem="y0v-SK-i72" secondAttribute="trailingMargin" id="DBN-7X-Pjq"/>
+                            <constraint firstItem="5g3-kM-YCB" firstAttribute="top" secondItem="y0v-SK-i72" secondAttribute="topMargin" constant="28" id="EAt-9d-X1P"/>
+                            <constraint firstItem="biS-VG-ppe" firstAttribute="trailing" secondItem="y0v-SK-i72" secondAttribute="trailingMargin" id="QyE-pt-ZqM"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="biS-VG-ppe" secondAttribute="bottom" constant="20" id="TOH-1i-KUL"/>
+                            <constraint firstItem="bZ3-TO-DaL" firstAttribute="centerY" secondItem="y0v-SK-i72" secondAttribute="centerY" id="vez-H5-A7p"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zfM-xE-PnD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="97" y="36"/>
+            <point key="canvasLocation" x="-167" y="120"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="oIU-o4-Qo5">
@@ -188,6 +208,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="puc-99-f39"/>
+        <segue reference="lpO-5b-BbM"/>
     </inferredMetricsTieBreakers>
 </document>
