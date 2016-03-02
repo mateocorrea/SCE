@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "BuddyBotFinal/vcMain.swift"
-            timestampString = "474406891.766221"
+            timestampString = "476254958.044278"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "378"
-            endingLineNumber = "378"
+            startingLineNumber = "381"
+            endingLineNumber = "381"
             landmarkName = "filteredByLength(_:filterLength:)"
             landmarkType = "5">
          </BreakpointContent>

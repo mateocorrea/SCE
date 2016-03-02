@@ -43,6 +43,9 @@ class vcMain: UIViewController {
         
         // Do any additional setup after loading the view.
         
+        self.view.backgroundColor = UIColor.greenColor()
+
+        
         let file = "example.txt" //this is the file. we will write to and read from it
         
         let text = "some random stuff for real feil" //just a text

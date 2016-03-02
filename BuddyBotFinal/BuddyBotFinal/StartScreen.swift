@@ -8,6 +8,8 @@
 
 import UIKit
 
+var currentBotImage = 0;
+
 extension UIColor
 {
     convenience init(red: Int, green: Int, blue: Int)
@@ -35,6 +37,40 @@ class StartScreen: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func botPressed(sender: UIButton) {
+        var newImage = Int(arc4random_uniform(UInt32(8)))
+        while(newImage == currentBotImage) {
+            newImage = Int(arc4random_uniform(UInt32(8)))
+        }
+        var imageName = ""
+        if(newImage == 0) {
+            imageName = "LDD"
+        } else if(newImage == 1) {
+            imageName = "LDU"
+        } else if(newImage == 2) {
+            imageName = "LUD"
+        } else if(newImage == 3) {
+            imageName = "LUU"
+        } else if(newImage == 4) {
+            imageName = "RDD"
+        } else if(newImage == 5) {
+            imageName = "RDU"
+        } else if(newImage == 6) {
+            imageName = "RUD"
+        } else { //(newImage == 7) {
+            imageName = "RUU"
+        }
+        if let image = UIImage(named: ("BuddyBot" + imageName + ".png")) {
+            sender.setImage(image, forState: .Normal)
+        }
+        
+        currentBotImage = newImage
+        //sender.setImage(coin,forState: UIControlState.Highlighted);
+    }
+    /*
     
+    if let image = UIImage(named: "play.png") {
+        playButton.setImage(image, forState: .Normal)
+    }*/
 }
 

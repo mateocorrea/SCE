@@ -111,9 +111,9 @@
 			children = (
 				3CF743BC1C0E65EA00EB1FF5 /* AppDelegate.swift */,
 				3CF743BE1C0E65EA00EB1FF5 /* ViewController.swift */,
+				3C9AEEF61C1913FF00F2652C /* preTraining.swift */,
 				3CF743C01C0E65EA00EB1FF5 /* Main.storyboard */,
 				3C03C57E1C57070900C106E3 /* Instructions.swift */,
-				3C9AEEF61C1913FF00F2652C /* preTraining.swift */,
 				3CF743ED1C0E66A000EB1FF5 /* vcMain.swift */,
 				3CF743C61C0E65EA00EB1FF5 /* Assets.xcassets */,
 				3CF743C81C0E65EA00EB1FF5 /* LaunchScreen.storyboard */,
