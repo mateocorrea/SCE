@@ -252,9 +252,9 @@
                                     <constraint firstAttribute="height" constant="400" id="kLF-Rp-rXe"/>
                                     <constraint firstAttribute="width" constant="362" id="rwp-pp-2hV"/>
                                 </constraints>
-                                <state key="normal" title="Bot" image="BuddyBotLDD"/>
+                                <state key="normal" image="LDDSS"/>
                                 <connections>
-                                    <action selector="botPressed:" destination="HAZ-cE-xjK" eventType="touchUpInside" id="Fb6-c9-qlR"/>
+                                    <action selector="botPressed:" destination="HAZ-cE-xjK" eventType="touchUpInside" id="aSD-FF-ujf"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -273,6 +273,9 @@
                             <constraint firstItem="V4u-b7-O0M" firstAttribute="leading" secondItem="y0v-SK-i72" secondAttribute="leadingMargin" id="sfR-oO-hKj"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="botBut" destination="6fw-x1-MpM" id="wEU-db-v6e"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zfM-xE-PnD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -308,10 +311,10 @@
     </scenes>
     <resources>
         <image name="BackButton" width="80" height="35"/>
-        <image name="BuddyBotLDD" width="800" height="725"/>
         <image name="BuddyBotTitle" width="472" height="129"/>
         <image name="CreditsButton" width="100" height="55"/>
         <image name="InstructionsButton" width="100" height="55"/>
+        <image name="LDDSS" width="800" height="725"/>
         <image name="PlayButton" width="100" height="55"/>
     </resources>
     <inferredMetricsTieBreakers>

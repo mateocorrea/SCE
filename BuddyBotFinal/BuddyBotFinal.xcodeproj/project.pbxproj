@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		3C03C57D1C57064300C106E3 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C03C57C1C57064300C106E3 /* StartScreen.swift */; };
 		3C03C57F1C57070900C106E3 /* Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C03C57E1C57070900C106E3 /* Instructions.swift */; };
+		3C25BD3D1C8D199200F801B2 /* Eyeliner.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C25BD381C8D199200F801B2 /* Eyeliner.mp3 */; };
+		3C25BD3E1C8D199200F801B2 /* Feelin Good.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C25BD391C8D199200F801B2 /* Feelin Good.mp3 */; };
+		3C25BD3F1C8D199200F801B2 /* Gone Fishin'.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C25BD3A1C8D199200F801B2 /* Gone Fishin'.mp3 */; };
+		3C25BD401C8D199200F801B2 /* Happy Days.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C25BD3B1C8D199200F801B2 /* Happy Days.mp3 */; };
+		3C25BD411C8D199200F801B2 /* Sweet Success.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C25BD3C1C8D199200F801B2 /* Sweet Success.mp3 */; };
 		3C57F3691C571177002F533D /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C57F3681C571177002F533D /* Credits.swift */; };
 		3C9AEEF71C1913FF00F2652C /* preTraining.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9AEEF61C1913FF00F2652C /* preTraining.swift */; };
 		3CF743BD1C0E65EA00EB1FF5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF743BC1C0E65EA00EB1FF5 /* AppDelegate.swift */; };
@@ -42,6 +47,11 @@
 /* Begin PBXFileReference section */
 		3C03C57C1C57064300C106E3 /* StartScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		3C03C57E1C57070900C106E3 /* Instructions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instructions.swift; sourceTree = "<group>"; };
+		3C25BD381C8D199200F801B2 /* Eyeliner.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Eyeliner.mp3; sourceTree = "<group>"; };
+		3C25BD391C8D199200F801B2 /* Feelin Good.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Feelin Good.mp3"; sourceTree = "<group>"; };
+		3C25BD3A1C8D199200F801B2 /* Gone Fishin'.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Gone Fishin'.mp3"; sourceTree = "<group>"; };
+		3C25BD3B1C8D199200F801B2 /* Happy Days.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Happy Days.mp3"; sourceTree = "<group>"; };
+		3C25BD3C1C8D199200F801B2 /* Sweet Success.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Sweet Success.mp3"; sourceTree = "<group>"; };
 		3C57F3681C571177002F533D /* Credits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credits.swift; sourceTree = "<group>"; };
 		3C9AEEF61C1913FF00F2652C /* preTraining.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = preTraining.swift; sourceTree = "<group>"; };
 		3CF743B91C0E65EA00EB1FF5 /* BuddyBotFinal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuddyBotFinal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +131,11 @@
 				3CF743C31C0E65EA00EB1FF5 /* BuddyBotFinal.xcdatamodeld */,
 				3C03C57C1C57064300C106E3 /* StartScreen.swift */,
 				3C57F3681C571177002F533D /* Credits.swift */,
+				3C25BD381C8D199200F801B2 /* Eyeliner.mp3 */,
+				3C25BD391C8D199200F801B2 /* Feelin Good.mp3 */,
+				3C25BD3A1C8D199200F801B2 /* Gone Fishin'.mp3 */,
+				3C25BD3B1C8D199200F801B2 /* Happy Days.mp3 */,
+				3C25BD3C1C8D199200F801B2 /* Sweet Success.mp3 */,
 			);
 			path = BuddyBotFinal;
 			sourceTree = "<group>";
@@ -247,9 +262,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C25BD411C8D199200F801B2 /* Sweet Success.mp3 in Resources */,
 				3CF743CA1C0E65EA00EB1FF5 /* LaunchScreen.storyboard in Resources */,
+				3C25BD3F1C8D199200F801B2 /* Gone Fishin'.mp3 in Resources */,
 				3CF743C71C0E65EA00EB1FF5 /* Assets.xcassets in Resources */,
 				3CF743C21C0E65EA00EB1FF5 /* Main.storyboard in Resources */,
+				3C25BD3D1C8D199200F801B2 /* Eyeliner.mp3 in Resources */,
+				3C25BD401C8D199200F801B2 /* Happy Days.mp3 in Resources */,
+				3C25BD3E1C8D199200F801B2 /* Feelin Good.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
