@@ -11,6 +11,8 @@ import CoreData
 
 class vcMain: UIViewController {
     
+    var coderMode = true;
+    
     var trainingMode = false;
     
     @IBOutlet weak var responseLabel: UILabel!
@@ -44,36 +46,7 @@ class vcMain: UIViewController {
         // Do any additional setup after loading the view.
         
         self.view.backgroundColor = UIColor.greenColor()
-
         
-        let file = "example.txt" //this is the file. we will write to and read from it
-        
-        let text = "some random stuff for real feil" //just a text
-        
-        if let dir : NSString = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true).first {
-            let path = dir.stringByAppendingPathComponent(file);
-            let path2 = "Assets.xcassets/" + file;
-            
-            //writing
-            do {
-                try text.writeToFile(path, atomically: false, encoding: NSUTF8StringEncoding)
-            }
-            catch {/* error handling here */
-                print("something went wrong writing");
-            }
-            
-            //reading
-            do {
-                let text2 = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-                print(path)
-                print(path2)
-                print(text2);
-            }
-            catch {/* error handling here */
-                print("something went wrong reading");
-            }
-        }
-
     }
     
     override func didReceiveMemoryWarning() {
@@ -90,6 +63,7 @@ class vcMain: UIViewController {
         let entity = NSEntityDescription.entityForName("Phrase", inManagedObjectContext: managedContext)
         if(phrases.count == 0) {
             preTrain(entity!, managedContext: managedContext)
+            NSLog("pretrained")
         }
         
         //currently:
@@ -174,9 +148,7 @@ class vcMain: UIViewController {
     
     
     @IBAction func btnLoad() {
-        for p in phrases {
-            print("Content: \(p.valueForKey("content")!) // MessageKey: \(p.valueForKey("mesKey")!) // ResponseKey1: \(p.valueForKey("resKey1")) // ResponseKey2: \(p.valueForKey("resKey2"))")
-        }
+        exportDataBase()
         
     }
     
@@ -408,5 +380,37 @@ class vcMain: UIViewController {
     func wordCount(word: String) -> Int
     {
         return word.componentsSeparatedByString(" ").count - 1
+    }
+    
+    func exportDataBase()
+    {
+        NSLog("running export database")
+        print("var preRecordedConvos = [")
+        var x = 0
+        /*for p in phrases {
+            x++
+            print("\"**" + String(x) + "**\",")
+            print("Content: \(p.valueForKey("content")!) // MessageKey: \(p.valueForKey("mesKey")!) // ResponseKey1: \(p.valueForKey("resKey1")) // ResponseKey2: \(p.valueForKey("resKey2"))")
+        }*/
+        for p in phrases {
+            x++
+            print("\"**" + String(x) + "**\",")
+            print("\"\(p.valueForKey("content")!)\",")
+            
+            for x in phrases {
+                
+            }
+            
+        }
+        // MUST GET RID OF LAST COMMA
+        print("]")
+    }
+    
+    
+    
+    func getDocumentsDirectory() -> NSString {
+        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
     }
 }
