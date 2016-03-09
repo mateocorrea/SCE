@@ -47,6 +47,10 @@ class vcMain: UIViewController {
         
         self.view.backgroundColor = UIColor.greenColor()
         
+        if responseLabel.text == "Label" {
+            responseLabel.text = preRecordedConvos[1]
+        }
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -54,6 +58,15 @@ class vcMain: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    /*
+    * Plan of Action
+    * 1. Save Computers message in a variable
+    * 2. Save User's Un-edited Message in a variable
+    * 3. Check if message is in database
+    * 4A. If so: set as response to computer message. Set as the respondable message (must have responses)
+    * 4B. If not in database, save in database. Set as response to computer message. Look for similar message to be the respondable one (must have responses)
+    * 5. Select a response to the respondable message, save that as the computer message, but present a version with more emotion
+    */
     @IBAction func btnSend() {
         
         
@@ -66,54 +79,63 @@ class vcMain: UIViewController {
             NSLog("pretrained")
         }
         
-        //currently:
-        // 1. Looks for the most similar phrase to the user's message (or one that meets a certain similarity requirement)
-        // --needs to save the uer's message as a new phrase (if it does not already exist) and set it as a response to the computer's message
-        // --if the user's phrase already exists, then it needs to be connected to the  ocmputers's message if it is not already
-        // 2. get the key
-        // 3. add all the messages that have that key to an array
-        // 4. respond with a random message from the array
+        // STEP 1
+        var computerMessageText = responseLabel.text
+        print("computer message text is \(computerMessageText)")
+        if(computerMessageText == nil) {
+            computerMessageText = preRecordedConvos[0]
+        }
+        var computerMessage: NSManagedObject?
+        for p in phrases {
+            if (p.valueForKey("content") as! String) == computerMessageText {
+                computerMessage = p
+                break
+            }
+        }
         
-        var messageExists = false
+        // STEP 2
         let messageText = messageField.text
-        var message: NSManagedObject?
-        let computerMessage = responseLabel.text
-        var computerMessageKey = ""
         
-        /* NEEDS TO LOOK FOR A SIMILAR PHRASE (that has a response) AND GET ITS KEY, NOT AN EXACT PHRASE */
-        message = respondableMessage(messageText!)
         
-        /* Loop through all the filtered phrases, check if the user's message exists */
-        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(messageText!)) {
-            /* Checks if the user's message already exists */
-            /* should FIX to say that the message exists if it reaches a certain requirement, not a total match */
-            if similarity(messageText!, b: phrase.valueForKey("content") as! String) == 0 {
+        // STEP 3
+        var userMessage: NSManagedObject?
+        var messageExists = false
+        for p in phrases {
+            if (p.valueForKey("content") as! String) == messageText {
                 messageExists = true
-                break
-            }
-        }
-        
-        /*  Loop through all the phrases and get the computer's original message's mesKey */
-        for phrase in phrases {
-            /* get the mesKey of the computerMessage */
-            if computerMessage == (phrase.valueForKey("content") as! String) {
-                computerMessageKey = phrase.valueForKey("mesKey") as! String
+                userMessage = p
                 break
             }
         }
         
         
-        print("The exact message sent: \(messageText)")
-        print("The message being replied to: \(message!.valueForKey("content") as! String) (Has mesKey of \(message!.valueForKey("mesKey") as! String))")
-        print("The computer's original message's mesKey: \(computerMessageKey)")
-        
-        /* create a new message if the message did not exist */
-        if(!messageExists) {
+        // STEP 4A
+        var messageToBeAnswered: NSManagedObject?
+        if messageExists {
+            //set as response to computer message. Set as the respondable message (must have responses)
+            for var index = 1; index < 26; index++ {
+                if computerMessage!.valueForKey("resKey" + String(index)) == nil {
+                    computerMessage!.setValue(userMessage!.valueForKey("mesKey"), forKey: "resKey" + String(index))
+                    break
+                }
+            }
+            do {
+                try managedContext.save()
+                print("The user's message was already in the database but was now saved as a response to the computer's original message")
+            } catch let error as NSError {
+                print("Message could not save \(error), \(error.userInfo)")
+            }
+        } else { // STEP 4B
+            //If not in database, save in database. Set as response to computer message. Look for similar message to be the respondable one (must have responses)
             let newMessage = NSManagedObject(entity: entity!, insertIntoManagedObjectContext: managedContext)
             newMessage.setValue(messageText, forKey: "content")
             newMessage.setValue(String(phrases.count + 1), forKey: "mesKey")
-            newMessage.setValue(computerMessageKey, forKey: "resKey1") // saves it as a response for the computer's message
-            
+            for var index = 1; index < 26; index++ {
+                if computerMessage!.valueForKey("resKey" + String(index)) == nil {
+                    computerMessage!.setValue(newMessage.valueForKey("mesKey"), forKey: "resKey" + String(index))
+                    break
+                }
+            }
             do {
                 try managedContext.save()
                 phrases.append(newMessage)
@@ -121,22 +143,23 @@ class vcMain: UIViewController {
             } catch let error as NSError {
                 print("Message could not save \(error), \(error.userInfo)")
             }
-        } else { // message already exists, connect it to the computer message
-            for var index = 1; index < 26; index++ {
-                if (message!.valueForKey("resKey" + String(index)) as? String) == computerMessageKey {
-                    print("The user's message was already in the database and was already a response to the computer's original message")
-                    break // if already connected, break
-                }
-                if message!.valueForKey("resKey" + String(index)) == nil {
-                    message!.setValue(computerMessageKey, forKey: "resKey" + String(index))
-                    print("The user's message was set as a response (resKey\(index)) to the computer's original message")
-                    break // break after connecting
-                }
+        }
+        if messageExists {
+            if userMessage!.valueForKey("resKey1") != nil {
+                messageToBeAnswered = userMessage!
+            } else {
+                messageToBeAnswered = respondableMessage(messageText!)
             }
+        } else {
+            messageToBeAnswered = respondableMessage(messageText!)
         }
         
+        print("The exact message sent: \(messageText)")
+        print("The message being replied to: \(messageToBeAnswered!.valueForKey("content") as! String) (Has mesKey of \(messageToBeAnswered!.valueForKey("mesKey") as! String))")
+        print("The computer's original message's mesKey: \(computerMessage!.valueForKey("mesKey"))")
+        
         /* responds to the most similar message in the database, regardless of what the user said */
-        var allResponses = answersTo(message!)
+        var allResponses = answersTo(messageToBeAnswered!)
         
         let randInt = Int(arc4random_uniform(UInt32(allResponses.count)))
         print(allResponses)
@@ -167,16 +190,18 @@ class vcMain: UIViewController {
     func connect(res: NSManagedObject, key: String?) {
     }
     
+    // FIX
     func preTrain(entity: NSEntityDescription, managedContext: NSManagedObjectContext) {
         
-        for var i = 0; i < preRecordedConvos.count; i = i + 2 {
+        /*for var i = 0; i < preRecordedConvos.count; i = i + 2 {
             let message = NSManagedObject(entity: entity, insertIntoManagedObjectContext: managedContext)
             message.setValue(preRecordedConvos[i], forKey: "content")
             message.setValue(String(phrases.count + 1), forKey: "mesKey")
             let response = NSManagedObject(entity: entity, insertIntoManagedObjectContext: managedContext)
             response.setValue(preRecordedConvos[i+1], forKey: "content")
             response.setValue(String(phrases.count + 2), forKey: "mesKey")
-            response.setValue(message.valueForKey("mesKey") as! String, forKey: "resKey1")
+            
+            message.setValue(response.valueForKey("mesKey") as! String, forKey: "resKey1")
             do {
                 try managedContext.save()
                 phrases.append(message)
@@ -184,6 +209,38 @@ class vcMain: UIViewController {
             } catch let error as NSError {
                 print("Message could not save \(error), \(error.userInfo)")
             }
+        }*/
+        var start = 2
+        var end = 3
+        while start < preRecordedConvos.count { //something
+            var keys = [String]()
+            for var i = start; i < preRecordedConvos.count; i++ {
+                let string = preRecordedConvos[i]
+                let chars = Array(string.characters)
+                if((chars[0] == "*") && (chars[1] == "*") && (chars[chars.count-2] == "*") && (chars[chars.count-1] == "*")) {
+                    end = i // end is index of next numbering
+                    break
+                } else {
+                    keys.append(string)
+                }
+            }
+            
+            let message = NSManagedObject(entity: entity, insertIntoManagedObjectContext: managedContext)
+            message.setValue(preRecordedConvos[start-1], forKey: "content")
+            message.setValue(String(phrases.count + 1), forKey: "mesKey")
+            
+            var keyCount = 0
+            for k in keys {
+                keyCount++
+                message.setValue(k, forKey: ("resKey" + String(keyCount)))
+            }
+            do {
+                try managedContext.save()
+                phrases.append(message)
+            } catch let error as NSError {
+                print("Message could not save \(error), \(error.userInfo)")
+            }
+            start = end + 2
         }
     }
     
@@ -193,20 +250,17 @@ class vcMain: UIViewController {
         if s == t { return 0 }
         if s.characters.count == 0 { return t.characters.count }
         if t.characters.count == 0 { return s.characters.count }
-    
         // create two work vectors of integer distances
         var v0 = [Int?](count: t.characters.count+1, repeatedValue: nil)
         var v1 = [Int?](count: t.characters.count+1, repeatedValue: nil)
         //int[] v0 = new int[t.Length + 1];
         //int[] v1 = new int[t.Length + 1];
-    
         // initialize v0 (the previous row of distances)
         // this row is A[0][i]: edit distance for an empty s
         // the distance is just the number of characters to delete from t
         for var i = 0; i < v0.count; i++ {
             v0[i] = i;
         }
-    
         for var i = 0; i < s.characters.count; i++ {
             // calculate v1 (current row distances) from the previous row v0
     
@@ -243,15 +297,14 @@ class vcMain: UIViewController {
                 
                 v1[j + 1] = smallest
             }
-    
             // copy v1 (current row) to v0 (previous row) for next iteration
             for var j = 0; j < v0.count; j++ {
                 v0[j] = v1[j];
             }
         }
-    
         return v1[t.characters.count]!;
     }
+    
     
     func respondableMessage(text: String) -> NSManagedObject
     {
@@ -309,28 +362,40 @@ class vcMain: UIViewController {
         return s
     }
     
+
     func answersTo(message: NSManagedObject) -> [String] {
+        var numbers = [String]()
+        for var index = 1; index < 26; index++ {
+            if message.valueForKey("resKey" + String(index)) == nil {
+                break
+            } else {
+                numbers.append(message.valueForKey("resKey" + String(index)) as! String)
+            }
+        }
+        
         var responses = [String]()
-        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(message.valueForKey("content") as! String)) {
-            for var i = 1; i < 26; i++ {
-                if message.valueForKey("mesKey") as? String == (phrase.valueForKey("resKey" + String(i))) as? String {
-                    responses.append(phrase.valueForKey("content") as! String)
-                }
+        for p in phrases {
+            if numbers.contains(p.valueForKey("mesKey") as! String) {
+                responses.append(p.valueForKey("content") as! String)
             }
         }
         return responses
     }
+    func responseKeysFor(message: NSManagedObject) -> [String] {
+        var numbers = [String]()
+        for var index = 1; index < 26; index++ {
+            if message.valueForKey("resKey" + String(index)) == nil {
+                break
+            } else {
+                numbers.append(message.valueForKey("resKey" + String(index)) as! String)
+            }
+        }
+        return numbers
+    }
     
     func hasAnswers(message: NSManagedObject) -> Bool {
-        for phrase in filteredByWordCount(phrases, wordCnt: wordCount(message.valueForKey("content") as! String)) {
-            for var i = 1; i < 26; i++ {
-                if (phrase.valueForKey("resKey" + String(i))) as? String == nil {
-                    break
-                }
-                if message.valueForKey("mesKey") as? String == (phrase.valueForKey("resKey" + String(i))) as? String {
-                    return true
-                }
-            }
+        if message.valueForKey("resKey1") != nil {
+            return true
         }
         return false
     }
@@ -382,6 +447,8 @@ class vcMain: UIViewController {
         return word.componentsSeparatedByString(" ").count - 1
     }
     
+    
+    //fix
     func exportDataBase()
     {
         NSLog("running export database")
@@ -396,9 +463,8 @@ class vcMain: UIViewController {
             x++
             print("\"**" + String(x) + "**\",")
             print("\"\(p.valueForKey("content")!)\",")
-            
-            for x in phrases {
-                
+            for x in responseKeysFor(p) {
+                print("\"" + x + "\",")
             }
             
         }
