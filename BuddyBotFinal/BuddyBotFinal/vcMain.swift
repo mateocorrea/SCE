@@ -48,8 +48,13 @@ class vcMain: UIViewController {
         self.view.backgroundColor = UIColor.greenColor()
         
         if responseLabel.text == "Label" {
-            responseLabel.text = preRecordedConvos[1]
+            repeat {
+                let randInt = Int(arc4random_uniform(UInt32(preRecordedConvos.count)))
+                responseLabel.text = preRecordedConvos[randInt]
+            } while (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"].contains(Array(responseLabel.text!.characters)[0]))
         }
+        
+        
         
     }
     
@@ -334,8 +339,8 @@ class vcMain: UIViewController {
         
         let aString = simplifyString(a)
         let bString = simplifyString(b)
-        print(aString)
-        print(bString)
+        //print(aString)
+        //print(bString)
         return levenshteinDistance(aString, t: bString)
     }
     

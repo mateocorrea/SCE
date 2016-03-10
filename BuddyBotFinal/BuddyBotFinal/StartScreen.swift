@@ -91,7 +91,7 @@ class StartScreen: UIViewController {
         }
         
         backgroundMusic?.volume = 0.3
-        backgroundMusic?.play()
+        //backgroundMusic?.play()
     }
     
     func update() {
