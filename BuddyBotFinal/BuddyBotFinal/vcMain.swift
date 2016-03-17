@@ -9,14 +9,18 @@
 import UIKit
 import CoreData
 
-class vcMain: UIViewController {
+class vcMain: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
     
+    @IBOutlet weak var messageTableView: UITableView!
     var coderMode = true;
     
     var trainingMode = false;
+    var convoArray:[String] = [String]()
     
+    @IBOutlet weak var dockViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var responseLabel: UILabel!
     
+    @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var messageField: UITextField!
     var phrases = [NSManagedObject]()
     
@@ -42,18 +46,39 @@ class vcMain: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view.
         
-        self.view.backgroundColor = UIColor.greenColor()
+        self.messageTableView.delegate = self
+        self.messageTableView.dataSource = self
         
+        // Set self as the delegate for the textfield
+        self.messageField.delegate = self
+        
+        // Add a tap gesture recognizer to the tableview
+        let tapGesture = UITapGestureRecognizer(target: self, action: "tableViewTapped")
+        self.messageTableView.addGestureRecognizer(tapGesture)
+        
+        //self.view.backgroundColor = UIColor.greenColor()
+        
+        /* FIX FIX FIX */
+        var next = ""
         if responseLabel.text == "Label" {
             repeat {
                 let randInt = Int(arc4random_uniform(UInt32(preRecordedConvos.count)))
                 responseLabel.text = preRecordedConvos[randInt]
-            } while (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"].contains(Array(responseLabel.text!.characters)[0]))
+                
+                next = preRecordedConvos[randInt+1]
+            } while (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*"].contains(Array(responseLabel.text!.characters)[0]) || Array(next.characters)[0] != "*")
+            
+            self.convoArray.append("*@$" + responseLabel.text!)
         }
         
+        
+        self.messageTableView.estimatedRowHeight = 80
+        self.messageTableView.rowHeight = UITableViewAutomaticDimension
+        
+        self.messageTableView.setNeedsLayout()
+        self.messageTableView.layoutIfNeeded()
         
         
     }
@@ -61,6 +86,76 @@ class vcMain: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func tableViewTapped() {
+        // Force the textfield to end editing
+        self.messageField.endEditing(true)
+    }
+    
+    // MARK: Textfield Delegate Methods
+    
+    func textFieldDidBeginEditing(textField: UITextField) {
+        
+        // Perform an animation to grow the dockview
+        self.view.layoutIfNeeded()
+        UIView.animateWithDuration(0.5, animations: {
+            
+            self.dockViewHeightConstraint.constant = 350
+            self.view.layoutIfNeeded()
+            
+            }, completion: nil)
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        
+        // Perform an animation to shrink the dockview
+        self.view.layoutIfNeeded()
+        UIView.animateWithDuration(0.5, animations: {
+            
+            self.dockViewHeightConstraint.constant = 60
+            self.view.layoutIfNeeded()
+            
+            }, completion: nil)
+        
+    }
+    
+    // MARK: TableView Delegate Methods
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        var identifier: String
+        var text: String
+        var x = Array(self.convoArray[indexPath.row].characters)
+        if (x[0] == "*") && (x[1] == "@") && (x[2] == "$") {
+            identifier = "BotMessageCell"
+            let index = self.convoArray[indexPath.row].startIndex
+            text = self.convoArray[indexPath.row].substringFromIndex(index.advancedBy(3))
+        } else {
+            identifier = "UserMessageCell"
+            text = self.convoArray[indexPath.row]
+        }
+        
+        // Create a table cell
+        let cell = self.messageTableView.dequeueReusableCellWithIdentifier(identifier)! as UITableViewCell
+        
+        // Customize the cell
+        cell.textLabel?.text = text
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        if(identifier == "BotMessageCell") {
+            cell.textLabel?.textColor = UIColor.redColor()
+        } else {
+            cell.textLabel?.textColor = UIColor.greenColor()
+            cell.textLabel?.textAlignment = NSTextAlignment.Right
+        }
+        
+        // Return the cell
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return convoArray.count
     }
     
     /*
@@ -74,6 +169,8 @@ class vcMain: UIViewController {
     */
     @IBAction func btnSend() {
         
+        // Call the end editing method for the text field
+        self.messageField.endEditing(true)
         
         /* FIX needs to be done in an init */
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -159,6 +256,10 @@ class vcMain: UIViewController {
             messageToBeAnswered = respondableMessage(messageText!)
         }
         
+        self.convoArray.append(messageText!)
+        
+        
+        
         print("The exact message sent: \(messageText)")
         print("The message being replied to: \(messageToBeAnswered!.valueForKey("content") as! String) (Has mesKey of \(messageToBeAnswered!.valueForKey("mesKey") as! String))")
         print("The computer's original message's mesKey: \(computerMessage!.valueForKey("mesKey"))")
@@ -169,8 +270,10 @@ class vcMain: UIViewController {
         let randInt = Int(arc4random_uniform(UInt32(allResponses.count)))
         print(allResponses)
         responseLabel.text = allResponses[randInt] // fails when nothing is a response
+        self.convoArray.append("*@$" + responseLabel.text!)
         messageField.text = ""
         
+        self.messageTableView.reloadData()
     }
     
     
@@ -405,7 +508,35 @@ class vcMain: UIViewController {
         return false
     }
     
-    /* Goes from half of length to 1.5 times the length */
+    //fix
+    func exportDataBase()
+    {
+        NSLog("running export database")
+        print("var preRecordedConvos = [")
+        var x = 0
+        /*for p in phrases {
+            x++
+            print("\"**" + String(x) + "**\",")
+            print("Content: \(p.valueForKey("content")!) // MessageKey: \(p.valueForKey("mesKey")!) // ResponseKey1: \(p.valueForKey("resKey1")) // ResponseKey2: \(p.valueForKey("resKey2"))")
+        }*/
+        for p in phrases {
+            x++
+            print("\"**" + String(x) + "**\",")
+            print("\"\(p.valueForKey("content")!)\",")
+            for x in responseKeysFor(p) {
+                print("\"" + x + "\",")
+            }
+            
+        }
+        // MUST GET RID OF LAST COMMA
+        print("]")
+    }
+    
+    
+    
+    
+    /*******************************/
+     /* Goes from half of length to 1.5 times the length */
     func filteredByLength(array: [NSManagedObject], filterLength: Int) -> [NSManagedObject]
     {
         print("original array: \(array.count)")
@@ -450,38 +581,5 @@ class vcMain: UIViewController {
     func wordCount(word: String) -> Int
     {
         return word.componentsSeparatedByString(" ").count - 1
-    }
-    
-    
-    //fix
-    func exportDataBase()
-    {
-        NSLog("running export database")
-        print("var preRecordedConvos = [")
-        var x = 0
-        /*for p in phrases {
-            x++
-            print("\"**" + String(x) + "**\",")
-            print("Content: \(p.valueForKey("content")!) // MessageKey: \(p.valueForKey("mesKey")!) // ResponseKey1: \(p.valueForKey("resKey1")) // ResponseKey2: \(p.valueForKey("resKey2"))")
-        }*/
-        for p in phrases {
-            x++
-            print("\"**" + String(x) + "**\",")
-            print("\"\(p.valueForKey("content")!)\",")
-            for x in responseKeysFor(p) {
-                print("\"" + x + "\",")
-            }
-            
-        }
-        // MUST GET RID OF LAST COMMA
-        print("]")
-    }
-    
-    
-    
-    func getDocumentsDirectory() -> NSString {
-        let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
     }
 }
