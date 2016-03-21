@@ -76,6 +76,7 @@ class vcMain: UIViewController, UITableViewDataSource, UITableViewDelegate, UITe
         
         self.messageTableView.estimatedRowHeight = 80
         self.messageTableView.rowHeight = UITableViewAutomaticDimension
+        self.messageTableView.separatorColor = UIColor.whiteColor()
         
         self.messageTableView.setNeedsLayout()
         self.messageTableView.layoutIfNeeded()
@@ -101,7 +102,7 @@ class vcMain: UIViewController, UITableViewDataSource, UITableViewDelegate, UITe
         self.view.layoutIfNeeded()
         UIView.animateWithDuration(0.5, animations: {
             
-            self.dockViewHeightConstraint.constant = 350
+            self.dockViewHeightConstraint.constant = 315
             self.view.layoutIfNeeded()
             
             }, completion: nil)
@@ -120,42 +121,71 @@ class vcMain: UIViewController, UITableViewDataSource, UITableViewDelegate, UITe
         
     }
     
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        // #warning Incomplete implementation, return the number of sections
+        return convoArray.count
+    }
+    
     // MARK: TableView Delegate Methods
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         var identifier: String
         var text: String
-        var x = Array(self.convoArray[indexPath.row].characters)
+        var x = Array(self.convoArray[indexPath.section].characters)
         if (x[0] == "*") && (x[1] == "@") && (x[2] == "$") {
             identifier = "BotMessageCell"
             let index = self.convoArray[indexPath.row].startIndex
-            text = self.convoArray[indexPath.row].substringFromIndex(index.advancedBy(3))
+            text = self.convoArray[indexPath.section].substringFromIndex(index.advancedBy(3))
         } else {
             identifier = "UserMessageCell"
-            text = self.convoArray[indexPath.row]
+            text = self.convoArray[indexPath.section]
         }
         
         // Create a table cell
-        let cell = self.messageTableView.dequeueReusableCellWithIdentifier(identifier)! as UITableViewCell
+        let cell = self.messageTableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as UITableViewCell
         
         // Customize the cell
         cell.textLabel?.text = text
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        cell.textLabel?.textColor = UIColor.whiteColor()
         if(identifier == "BotMessageCell") {
-            cell.textLabel?.textColor = UIColor.redColor()
+            //cell.textLabel?.textColor = UIColor.whiteColor()
         } else {
-            cell.textLabel?.textColor = UIColor.greenColor()
+            //cell.textLabel?.textColor = UIColor.greenColor()
             cell.textLabel?.textAlignment = NSTextAlignment.Right
         }
+        
+        cell.contentView.layer.cornerRadius = 10
+        cell.contentView.layer.masksToBounds = true
+        
         
         // Return the cell
         return cell
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return convoArray.count
+        return 1//convoArray.count
+    }
+    
+    /*func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return " "//sections[section].heading
+    }*/
+    
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 8.0
+    }
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let returnedView = UIView()
+        returnedView.backgroundColor = UIColor.clearColor()
+        
+        let label = UILabel()
+        label.text = " "
+        returnedView.addSubview(label)
+        
+        return returnedView
     }
     
     /*
